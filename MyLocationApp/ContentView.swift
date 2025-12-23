@@ -5,13 +5,6 @@
 //  Created by Nathan Cho on 12/23/25.
 //
 
-//
-//  ContentView.swift
-//  MyLocationApp
-//
-//  Created by Nathan Cho on 12/23/25.
-//
-
 import SwiftUI
 import MapKit
 import CoreLocation
@@ -223,6 +216,7 @@ struct ContentView: View {
                                     .frame(width: 12, height: 12)
                             }
                         }
+                        .disabled(true)
                         .frame(width: 80, height: 80)
                         .clipShape(Circle())
                         .overlay(Circle().stroke(Color.gray.opacity(0.3), lineWidth: 2))
@@ -258,10 +252,11 @@ struct ContentView: View {
                 .padding(.horizontal)
                 
                 Spacer()
-                
-                Text("🌎 · 🌍 · 🌏")
+
+                Text("🌎")
                     .font(.title)
                     .frame(maxWidth: .infinity)
+                    .padding(.bottom, 20)
             }
             .padding(.vertical)
             .frame(maxHeight: .infinity)
