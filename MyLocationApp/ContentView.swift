@@ -242,6 +242,8 @@ struct ContentView: View {
                 .padding(.horizontal)
                 
                 Spacer()
+                
+                Text("🌎")
             }
             .padding(.vertical)
             .frame(maxHeight: .infinity)
