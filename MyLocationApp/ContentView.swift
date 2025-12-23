@@ -5,6 +5,13 @@
 //  Created by Nathan Cho on 12/23/25.
 //
 
+//
+//  ContentView.swift
+//  MyLocationApp
+//
+//  Created by Nathan Cho on 12/23/25.
+//
+
 import SwiftUI
 import MapKit
 import CoreLocation
@@ -110,11 +117,20 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
 // MARK: - Main View
 struct ContentView: View {
     @StateObject private var locationManager = LocationManager()
+    @State private var currentTime = Date()
+    
+    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
     var body: some View {
         VStack(spacing: 0) {
             Spacer()
-                .frame(height: 8)
+                .frame(height: 60)
+            
+            // Calculate coordinates once
+            let currentLat = locationManager.location?.coordinate.latitude ?? 34.0739
+            let currentLong = locationManager.location?.coordinate.longitude ?? -118.2400
+            let antiLat = -currentLat
+            let antiLong = currentLong > 0 ? currentLong - 180 : currentLong + 180
             
             // Top half: Map in card
             Map(position: .constant(.region(locationManager.region))) {
@@ -164,17 +180,18 @@ struct ContentView: View {
                 .padding(.horizontal)
                 
                 VStack(alignment: .leading, spacing: 8) {
-                    let currentLat = locationManager.location?.coordinate.latitude ?? 34.0739
-                    let currentLong = locationManager.location?.coordinate.longitude ?? -118.2400
-                    
                     Text(locationManager.locationName)
                         .font(.headline)
+                        .lineLimit(2)
                     Text("Latitude: \(currentLat)")
                         .font(.system(.body, design: .monospaced))
+                        .minimumScaleFactor(0.8)
                     Text("Longitude: \(currentLong)")
                         .font(.system(.body, design: .monospaced))
-                    Text("Current time: \(Date().formatted(date: .omitted, time: .shortened))")
+                        .minimumScaleFactor(0.8)
+                    Text("Current time: \(currentTime.formatted(date: .omitted, time: .shortened))")
                         .font(.system(.body, design: .monospaced))
+                        .minimumScaleFactor(0.8)
                 }
                 .padding()
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -189,11 +206,6 @@ struct ContentView: View {
                         .fontWeight(.bold)
                     
                     HStack(spacing: 16) {
-                        let currentLat = locationManager.location?.coordinate.latitude ?? 34.0739
-                        let currentLong = locationManager.location?.coordinate.longitude ?? -118.2400
-                        let antiLat = -currentLat
-                        let antiLong = currentLong > 0 ? currentLong - 180 : currentLong + 180
-                        
                         // Circular map preview
                         Map(position: .constant(.region(MKCoordinateRegion(
                             center: CLLocationCoordinate2D(
@@ -219,12 +231,16 @@ struct ContentView: View {
                             Text(locationManager.antipodeLocationName)
                                 .font(.system(.body, design: .monospaced))
                                 .bold()
+                                .lineLimit(2)
                             Text("Latitude: \(antiLat)")
                                 .font(.system(.body, design: .monospaced))
+                                .minimumScaleFactor(0.8)
                             Text("Longitude: \(antiLong)")
                                 .font(.system(.body, design: .monospaced))
-                            Text("Current time: \(Date().formatted(date: .omitted, time: .shortened))")
+                                .minimumScaleFactor(0.8)
+                            Text("Current time: \(currentTime.formatted(date: .omitted, time: .shortened))")
                                 .font(.system(.body, design: .monospaced))
+                                .minimumScaleFactor(0.8)
                         }
                         
                         Spacer()
@@ -243,11 +259,16 @@ struct ContentView: View {
                 
                 Spacer()
                 
-                Text("🌎")
+                Text("🌎 · 🌍 · 🌏")
+                    .font(.title)
+                    .frame(maxWidth: .infinity)
             }
             .padding(.vertical)
             .frame(maxHeight: .infinity)
             .background(Color(UIColor.systemBackground))
+        }
+        .onReceive(timer) { _ in
+            currentTime = Date()
         }
     }
 }
